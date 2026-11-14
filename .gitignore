@@ -1,0 +1,14 @@
+node_modules
+dist
+.next
+.env
+.env.*
+!.env.example
+.pgdata
+*.log
+coverage
+uploads
+apps/staging/public/inspectflow-widget.js
+apps/web/public/inspectflow-widget.js
+apps/staging/dist
+apps/widget/dist

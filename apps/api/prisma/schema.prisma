@@ -1,0 +1,291 @@
+// InspectFlow database schema (PostgreSQL + Prisma).
+// Entities follow section 13 of the project proposal. Extra tables are marked.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProjectRole {
+  TESTER_CLIENT
+  DEVELOPER
+  LEAD
+}
+
+enum BuildStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum ApprovalDecision {
+  APPROVED
+  CHANGES_REQUESTED
+}
+
+enum TicketSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  BLOCKER
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  VERIFIED
+}
+
+enum AnnotationType {
+  ARROW
+  BOX
+  BLUR
+}
+
+enum ArtifactKind {
+  SCREENSHOT
+  ATTACHMENT
+}
+
+enum EventType {
+  CONSOLE
+  NETWORK
+  ERROR
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  memberships     Membership[]
+  reportedTickets Ticket[]        @relation("TicketReporter")
+  assignedTickets Ticket[]        @relation("TicketAssignee")
+  comments        Comment[]
+  approvals       BuildApproval[]
+  refreshTokens   RefreshToken[]
+  activities      ActivityLog[]
+}
+
+model Project {
+  id             String   @id @default(uuid())
+  name           String
+  description    String?
+  stagingUrl     String?
+  // Widget key: public identifier. Only a SHA-256 hash and a short prefix are stored.
+  apiKeyPrefix   String   @unique
+  apiKeyHash     String
+  allowedOrigins String[] @default([])
+  githubRepo     String?  @unique // "owner/repo"
+  webhookSecret  String? // used to verify X-Hub-Signature-256; never returned by the API
+  nextTicketNo   Int      @default(1)
+  createdAt      DateTime @default(now())
+
+  memberships       Membership[]
+  builds            Build[]
+  tickets           Ticket[]
+  webhookDeliveries WebhookDelivery[]
+  activities        ActivityLog[]
+}
+
+model Membership {
+  id        String      @id @default(uuid())
+  userId    String
+  projectId String
+  role      ProjectRole
+  createdAt DateTime    @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@index([projectId])
+}
+
+model Build {
+  id         String      @id @default(uuid())
+  projectId  String
+  name       String
+  branch     String
+  commitSha  String
+  previewUrl String?
+  status     BuildStatus @default(DRAFT)
+  createdAt  DateTime    @default(now())
+
+  project   Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tickets   Ticket[]
+  approvals BuildApproval[]
+
+  @@index([projectId, status])
+}
+
+model BuildApproval {
+  id        String           @id @default(uuid())
+  buildId   String
+  userId    String
+  decision  ApprovalDecision
+  note      String?
+  // Commit the client actually reviewed; copied from the build at decision time.
+  commitSha String
+  decidedAt DateTime         @default(now())
+
+  build Build @relation(fields: [buildId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([buildId])
+}
+
+model Ticket {
+  id            String         @id @default(uuid())
+  projectId     String
+  number        Int // human friendly per-project number (IF-12)
+  buildId       String?
+  reporterId    String
+  assigneeId    String?
+  duplicateOfId String?
+  title         String
+  description   String
+  severity      TicketSeverity @default(MEDIUM)
+  status        TicketStatus   @default(OPEN)
+  pageUrl       String?
+  viewport      String?
+  userAgent     String?
+  branch        String?
+  prNumber      Int?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  resolvedAt    DateTime?
+
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  build       Build?   @relation(fields: [buildId], references: [id], onDelete: SetNull)
+  reporter    User     @relation("TicketReporter", fields: [reporterId], references: [id], onDelete: Restrict)
+  assignee    User?    @relation("TicketAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  duplicateOf Ticket?  @relation("TicketDuplicate", fields: [duplicateOfId], references: [id], onDelete: SetNull)
+  duplicates  Ticket[] @relation("TicketDuplicate")
+
+  annotations Annotation[]
+  artifacts   Artifact[]
+  events      CapturedEvent[]
+  comments    Comment[]
+  activities  ActivityLog[]
+
+  @@unique([projectId, number])
+  @@index([projectId, status])
+  @@index([projectId, severity])
+  @@index([buildId])
+  @@index([assigneeId])
+  @@index([projectId, branch])
+  @@index([projectId, prNumber])
+}
+
+model Annotation {
+  id        String         @id @default(uuid())
+  ticketId  String
+  type      AnnotationType
+  shapeJson Json
+  createdAt DateTime       @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+}
+
+model Artifact {
+  id         String       @id @default(uuid())
+  ticketId   String
+  kind       ArtifactKind
+  storageKey String       @unique
+  mimeType   String
+  sizeBytes  Int
+  createdAt  DateTime     @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+}
+
+model CapturedEvent {
+  id         String    @id @default(uuid())
+  ticketId   String
+  type       EventType
+  method     String?
+  url        String?
+  statusCode Int?
+  durationMs Int?
+  message    String?
+  stack      String?
+  timestamp  DateTime
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId, type])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  ticketId  String
+  authorId  String
+  body      String
+  createdAt DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author User   @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([ticketId])
+}
+
+model WebhookDelivery {
+  id             String   @id @default(uuid())
+  projectId      String
+  event          String
+  deliveryId     String   @unique // X-GitHub-Delivery: replays are ignored
+  signatureValid Boolean
+  outcome        String? // e.g. "resolved 2 tickets", "ignored: not merged"
+  processedAt    DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, processedAt])
+}
+
+// ---- Supporting tables (not in the proposal ER list) ----
+
+// Hashed refresh tokens so logout can revoke them.
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Activity history for tickets plus audit log for approvals and role changes.
+model ActivityLog {
+  id        String   @id @default(uuid())
+  projectId String
+  ticketId  String?
+  actorId   String?
+  action    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  ticket  Ticket? @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  actor   User?   @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([projectId, createdAt])
+  @@index([ticketId, createdAt])
+}

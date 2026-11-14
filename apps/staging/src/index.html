@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Acme Shop (staging demo)</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="banner" role="note">
+      <strong>Demonstration staging site.</strong> The problems on this page are
+      <em>intentional test scenarios</em> for InspectFlow, not bugs in InspectFlow itself.
+      Find one, click <strong>Report issue</strong> (bottom corner) and sign in with a demo tester account.
+    </div>
+
+    <header class="top">
+      <span class="brand">Acme Shop</span>
+      <nav aria-label="Shop"><a href="#products">Products</a> <a href="#checkout">Checkout</a> <a href="#scenarios">Test scenarios</a></nav>
+    </header>
+
+    <main>
+      <section id="products">
+        <h1>Spring collection</h1>
+        <p class="lead">Scenario 5: on a narrow screen the product cards below have a layout problem (price overlaps the name).</p>
+        <div class="grid">
+          <article class="card"><div class="img"></div><h2 class="name">Trail running shoes with extra long product name</h2><span class="price">$89.00</span></article>
+          <article class="card"><div class="img alt"></div><h2 class="name">Waterproof jacket, lightweight</h2><span class="price">$129.00</span></article>
+          <article class="card"><div class="img"></div><h2 class="name">Merino wool socks, 3 pack</h2><span class="price">$24.00</span></article>
+        </div>
+      </section>
+
+      <section id="checkout" class="panel">
+        <h2>Checkout</h2>
+        <p>Order total: <strong>$48.00</strong></p>
+        <label for="promo">Promo code</label>
+        <input id="promo" placeholder="SPRING10" autocomplete="off" />
+        <div class="row">
+          <button id="pay" class="primary">Pay now</button>
+          <button id="order" class="primary">Place order</button>
+        </div>
+        <p id="status" role="status" class="status"></p>
+      </section>
+
+      <section id="scenarios" class="panel">
+        <h2>Test scenarios</h2>
+        <ol>
+          <li><strong>Dead button:</strong> click <em>Pay now</em>. Nothing visible happens, but a JavaScript error is thrown.</li>
+          <li><strong>Failed API request:</strong> click <em>Place order</em>. The server answers 500 and the page shows no message.</li>
+          <li><strong>Console error:</strong> <button id="promo-check" class="link">Apply promo code</button> logs an error to the console.</li>
+          <li><strong>Missing resource:</strong> <button id="load-reco" class="link">Load recommendations</button> calls an endpoint that does not exist (404).</li>
+          <li><strong>Layout problem:</strong> shrink the window to phone width and look at the product cards.</li>
+        </ol>
+        <p class="hint">Tip: type something into the promo code box, then try the <strong>Blur</strong> tool on it.</p>
+      </section>
+    </main>
+
+    <footer class="foot">Acme Shop is a fictional store used only for the InspectFlow demonstration.</footer>
+
+    <script src="app.js" defer></script>
+    <!-- InspectFlow widget: this one tag is all a site needs. -->
+    <script src="inspectflow-widget.js" data-key="{{WIDGET_KEY}}" data-api="{{API_URL}}" defer></script>
+  </body>
+</html>

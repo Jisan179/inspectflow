@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+/* Design tokens. Dark mode follows the operating system setting. */
+:root {
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef1f8;
+  --border: #dde2ee;
+  --text: #172036;
+  --muted: #5a6685;
+  --brand: #3b6cf6;
+  --brand-strong: #2c55d1;
+  --brand-soft: #e6edff;
+  --danger: #d1343b;
+  --danger-soft: #fdecec;
+  --warn: #b8710a;
+  --warn-soft: #fff4e0;
+  --ok: #17803d;
+  --ok-soft: #e4f6ea;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1424;
+    --surface: #161e33;
+    --surface-2: #1d2742;
+    --border: #2a3656;
+    --text: #e6ebf7;
+    --muted: #97a4c4;
+    --brand: #6d93ff;
+    --brand-strong: #8aa9ff;
+    --brand-soft: #1f2d57;
+    --danger: #ff7a80;
+    --danger-soft: #3a1c22;
+    --warn: #f0b34d;
+    --warn-soft: #3a2c12;
+    --ok: #55d184;
+    --ok-soft: #14301f;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface2: var(--surface-2);
+  --color-line: var(--border);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-brandstrong: var(--brand-strong);
+  --color-brandsoft: var(--brand-soft);
+  --color-danger: var(--danger);
+  --color-dangersoft: var(--danger-soft);
+  --color-warn: var(--warn);
+  --color-warnsoft: var(--warn-soft);
+  --color-ok: var(--ok);
+  --color-oksoft: var(--ok-soft);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+}
+
+body { background: var(--bg); color: var(--text); font-family: var(--font-sans); }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; border-radius: 6px; }

@@ -1,0 +1,11 @@
+{
+  "name": "@inspectflow/staging",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demo staging website with deliberate test defects and the InspectFlow widget embedded",
+  "scripts": {
+    "build": "pnpm --filter @inspectflow/widget build && node build.mjs",
+    "dev": "pnpm run build && node server.mjs",
+    "start": "node server.mjs"
+  }
+}

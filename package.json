@@ -1,0 +1,20 @@
+{
+  "name": "inspectflow",
+  "private": true,
+  "version": "1.0.0",
+  "description": "InspectFlow: Visual Staging QA, Bug Annotation and PR Sign-Off Hub",
+  "scripts": {
+    "dev:api": "pnpm --filter @inspectflow/api start:dev",
+    "dev:web": "pnpm --filter @inspectflow/web dev",
+    "dev:staging": "pnpm --filter @inspectflow/staging dev",
+    "build:widget": "pnpm --filter @inspectflow/widget build",
+    "build": "pnpm -r build",
+    "test": "pnpm --filter @inspectflow/api test",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write \"apps/*/src/**/*.{ts,tsx}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  },
+  "packageManager": "pnpm@12.16.1"
+}

@@ -1,0 +1,39 @@
+# Local development services: PostgreSQL and a MinIO bucket that behaves like S3.
+#   docker compose up -d
+# The API itself is run from VS Code with `pnpm dev:api` (see README).
+# NOTE: written for convenience; the project was developed against a native
+# PostgreSQL install, so this file is not covered by the automated tests.
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: inspectflow
+      POSTGRES_PASSWORD: inspectflow
+      POSTGRES_DB: inspectflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inspectflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+
+volumes:
+  pgdata:
+  miniodata:
