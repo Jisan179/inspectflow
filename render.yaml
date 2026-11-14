@@ -2,6 +2,8 @@
 # Create it from the Render dashboard: New > Blueprint > pick this repository.
 # Values marked "sync: false" are asked for once in the dashboard and never
 # stored in Git. See docs/DEPLOYMENT.md for the full walkthrough.
+# One-time demo data: set the dashboard env var RUN_SEED=true to run the seed
+# on the next boot, then set it back to false (it resets demo data each run).
 services:
   - type: web
     name: inspectflow-api
@@ -10,7 +12,7 @@ services:
     region: singapore
     buildCommand: npm install -g pnpm@12.16.1 && pnpm install --frozen-lockfile && pnpm --filter @inspectflow/api build
     # Apply database migrations, then start. Migrations are idempotent.
-    startCommand: cd apps/api && npx prisma migrate deploy && node dist/main
+    startCommand: cd apps/api && npx prisma migrate deploy && if [ "$RUN_SEED" = "true" ]; then npx ts-node -r tsconfig-paths/register prisma/seed.ts; fi && node dist/main
     healthCheckPath: /health
     autoDeploy: true
     envVars:
