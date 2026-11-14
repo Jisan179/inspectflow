@@ -6,9 +6,9 @@ Read this before the supervisor demo so nothing is a surprise.
 
 | # | Limitation | Impact | What to do |
 | --- | --- | --- | --- |
-| 1 | **No public deployment exists yet.** | The supervisor cannot open a link today. | Follow [DEPLOYMENT.md](DEPLOYMENT.md); it needs your Supabase, Render and Vercel accounts. |
+| 1 | **Free hosting sleeps.** Deployed at the URLs in [DEPLOYMENT.md](DEPLOYMENT.md), but the free API spins down after 15 idle minutes. | The first request after a pause can take up to a minute or time out. | Open the API `/health` URL a few minutes before the demo; the daily keep-alive ping reduces (but does not remove) this. |
 | 2 | **A real GitHub merge was never tested.** Webhook tests use correctly signed requests built by the test code. | The HMAC check, replay protection and auto-resolve are proven, but GitHub's real payloads and delivery behaviour are not. | Create a test repository and follow section "Connect GitHub" in the deployment guide. |
-| 3 | **S3 storage driver untested** against a real bucket. | Screenshots would fail to save if an S3 setting is wrong (the API returns 500 and creates no ticket). | Test once with the real bucket right after deploying; `scripts/demo-flow.mjs` does not cover uploads, use the widget. |
+| 3 | ~~S3 storage driver untested~~ **Now verified in production**: the seed uploaded screenshots to the private Supabase bucket and the smoke test downloaded one through a signed URL. | - | Nothing to do. |
 | 4 | **Email notifications are not implemented** (optional in the proposal). | Testers must open the dashboard to see replies. | Future work. |
 | 5 | **No automated browser tests.** | Widget and dashboard UI are verified only by the manual run in [TEST_REPORT.md](TEST_REPORT.md). | Add Playwright later. |
 | 6 | Only Chromium was used for manual checks. | Firefox and Safari behaviour of html2canvas and the widget UI is unknown. | Test in the supervisor's browser beforehand. |

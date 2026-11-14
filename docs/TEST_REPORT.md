@@ -61,13 +61,17 @@ Performed with the built-in browser pane against the locally running stack (API 
 
 **Important:** the webhook calls in this script are real HMAC-signed HTTP requests built by the script. They do **not** come from github.com. A merge on a real GitHub repository has not been tested (it needs your repository; see [DEPLOYMENT.md](DEPLOYMENT.md)).
 
+## Production smoke test (14 November 2026, after deployment)
+
+The stack was deployed (Vercel + Render + Supabase, see [DEPLOYMENT.md](DEPLOYMENT.md)) and a **read-only** smoke test passed **21 of 21 checks** against the live services: all five public pages served; API health with database up; all four demo accounts log in; the seeded project, 3 tickets and 2 builds are visible with the correct role filtering (tester sees only own reports and gets 403 on the overview); ticket IF-1 returns its 2 sanitised events and a **private screenshot downloaded from Supabase storage via a signed URL** (PNG verified, which confirms the S3 driver end to end); the widget endpoint accepts the demo key from the staging origin and refuses a foreign origin with 403. The mutating workflow script was deliberately not run in production so the seeded demo state stays fresh for the supervisor.
+
 ## Not tested, and why
 
 | Item | Status |
 | --- | --- |
 | A real GitHub webhook from a real merge | Not done. Needs a repository, a public API URL and your authorisation. |
-| Public deployment (Vercel, Render, Supabase) | Not done. Needs your accounts. No public URL exists yet. |
-| S3 driver against a real bucket | Not done. The local driver is tested; the S3 driver is a thin wrapper over the AWS SDK and is unverified. |
+| Public deployment (Vercel, Render, Supabase) | **Done and verified** (see the production smoke test above). |
+| S3 driver against a real bucket | **Verified in production**: seed uploads plus a signed-URL download from the private Supabase bucket. |
 | Automated browser tests (Playwright) | Not written. The widget flow was verified manually as described above. |
 | Load or performance tests | Not run. Typical local response times are 20 to 60 ms (`X-Response-Time`), no measured evidence at scale. |
 | Safari, Firefox, mobile browsers | Only Chromium (the pane's engine) was used. |

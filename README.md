@@ -135,4 +135,14 @@ The project key is shown once when the project is created (and again after a rot
 
 ## Status
 
-Everything listed in the proposal's essential scope is implemented and tested locally. Public hosting and a real GitHub merge need your own accounts and are **not done yet**; the exact steps are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). Details and caveats: [docs/COMPLIANCE.md](docs/COMPLIANCE.md) and [docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md).
+**Deployed and verified on 14 November 2026.** A read-only production smoke test passed 21 of 21 checks (see [docs/TEST_REPORT.md](docs/TEST_REPORT.md)).
+
+| What | URL |
+| --- | --- |
+| Dashboard (sign in here) | https://inspectflow-web-seven.vercel.app |
+| Demo staging site (report bugs here) | https://inspectflow-staging.vercel.app |
+| API with Swagger docs | https://inspectflow-api.onrender.com/api/docs |
+
+The free API sleeps after 15 minutes of inactivity; the first request can take up to a minute. Open the API health URL a few minutes before a demo. Still outstanding: a merge on a real GitHub repository has not been exercised (webhook handling is tested with signed requests only).
+
+Details and caveats: [docs/COMPLIANCE.md](docs/COMPLIANCE.md) and [docs/KNOWN_LIMITATIONS.md](docs/KNOWN_LIMITATIONS.md).

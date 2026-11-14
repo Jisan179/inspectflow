@@ -1,6 +1,8 @@
 # Deployment guide (free tier)
 
-**Current state: nothing is deployed.** There is no public URL. Everything below is prepared configuration and instructions; every step marked **YOU** needs one of your accounts, so I could not do it for you. Do not tell your supervisor a link exists until you have finished the smoke test in section 8.
+**Current state: deployed (14 November 2026).** Dashboard: https://inspectflow-web-seven.vercel.app, API: https://inspectflow-api.onrender.com (health at `/health`), staging demo: https://inspectflow-staging.vercel.app. Demo data is loaded and a read-only production smoke test passed 21/21 (see [TEST_REPORT.md](TEST_REPORT.md)). The sections below are kept as the original walkthrough for redeploying from scratch.
+
+**Reset the demo data:** in the Render dashboard set the env var `RUN_SEED=true` and save (the next boot runs the seed inside Render, where the secrets live), then set it back to `false`. Leaving it `true` would wipe reported tickets on every restart. The daily keep-alive ping is enabled (repository variable `API_URL` is set).
 
 ## 1. Decision: which hosting option
 
