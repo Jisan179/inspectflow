@@ -1,0 +1,6 @@
+$ pnpm test -- crud-extras -t "roll back"  (real PostgreSQL, forced failure in the last step)
+
+  PASS  database transactions roll back as a unit > a failure while recording a build decision leaves build and approvals unchanged
+  PASS  database transactions roll back as a unit > a failure while creating a ticket leaves no ticket and no number gap
+
+Tests: 2 passed, 0 failed

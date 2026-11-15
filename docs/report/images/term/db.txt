@@ -1,0 +1,29 @@
+$ psql inspectflow -c "\dt"
+                 List of relations
+ Schema |        Name        | Type  |    Owner    
+--------+--------------------+-------+-------------
+ public | ActivityLog        | table | inspectflow
+ public | Annotation         | table | inspectflow
+ public | Artifact           | table | inspectflow
+ public | Build              | table | inspectflow
+ public | BuildApproval      | table | inspectflow
+ public | CapturedEvent      | table | inspectflow
+ public | Comment            | table | inspectflow
+ public | Membership         | table | inspectflow
+ public | Project            | table | inspectflow
+ public | RefreshToken       | table | inspectflow
+ public | Ticket             | table | inspectflow
+ public | User               | table | inspectflow
+ public | WebhookDelivery    | table | inspectflow
+ public | _prisma_migrations | table | inspectflow
+(14 rows)
+
+
+$ psql inspectflow -c "SELECT number, title, severity, status, branch FROM Ticket"
+ number |               title                | severity |   status    |         branch          
+--------+------------------------------------+----------+-------------+-------------------------
+      1 | Pay now button does nothing        | HIGH     | IN_PROGRESS | 
+      2 | Product cards overlap on small scr | MEDIUM   | IN_PROGRESS | fix/product-card-layout
+      3 | Typo in footer: 'Contakt us'       | LOW      | VERIFIED    | 
+(3 rows)
+

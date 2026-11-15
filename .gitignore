@@ -12,3 +12,4 @@ apps/staging/public/inspectflow-widget.js
 apps/web/public/inspectflow-widget.js
 apps/staging/dist
 apps/widget/dist
+docs/report/tools/node_modules

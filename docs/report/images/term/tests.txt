@@ -1,0 +1,17 @@
+$ pnpm test
+
+  PASS  src/common/utils/sanitize.spec.ts  (19 tests)
+  PASS  src/modules/files/image.service.spec.ts  (8 tests)
+  PASS  src/modules/github/github-signature.spec.ts  (6 tests)
+  PASS  src/modules/tickets/ticket-workflow.spec.ts  (8 tests)
+  PASS  test/auth.e2e-spec.ts  (14 tests)
+  PASS  test/builds.e2e-spec.ts  (16 tests)
+  PASS  test/crud-extras.e2e-spec.ts  (13 tests)
+  PASS  test/github.e2e-spec.ts  (14 tests)
+  PASS  test/projects-authz.e2e-spec.ts  (19 tests)
+  PASS  test/rate-limit.e2e-spec.ts  (2 tests)
+  PASS  test/reports.e2e-spec.ts  (20 tests)
+  PASS  test/tickets.e2e-spec.ts  (23 tests)
+
+Test Suites: 12 passed, 12 total
+Tests:       162 passed, 162 total

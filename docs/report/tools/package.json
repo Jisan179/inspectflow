@@ -1,0 +1,1 @@
+{"name":"report-tools","private":true,"version":"1.0.0","description":"Builds the project report docx","dependencies":{"docx":"^9.15.4"}}
